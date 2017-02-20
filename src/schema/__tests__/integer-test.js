@@ -2,11 +2,7 @@
 
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
-import { IntegerSchema, IntegerValue } from '../integer';
-
-const Word = new IntegerSchema(4);
-const HalfWord = new IntegerSchema(2);
-const SignedWord = new IntegerSchema(4, { signed: true });
+import { Word, HalfWord, SignedWord, IntegerValue } from '../integer';
 
 describe('Integers', () => {
   it('unpacks little-endian words', () => {

@@ -41,3 +41,10 @@ export class IntegerSchema extends Schema {
     return this.size;
   }
 }
+
+export const Word = new IntegerSchema(4);
+export const SignedWord = new IntegerSchema(4, { signed: true });
+export const HalfWord = new IntegerSchema(2);
+export const SignedHalfWord = new IntegerSchema(2, { signed: true });
+export const Byte = new IntegerSchema(1);
+export const SignedByte = new IntegerSchema(1, { signed: true });
