@@ -2,8 +2,8 @@
 
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
-import { Schema, Value } from '../schema';
 import sinon from 'sinon';
+import { Schema, Value } from '../schema';
 
 describe('Schema: Values', () => {
   it('lazily computes the value', () => {

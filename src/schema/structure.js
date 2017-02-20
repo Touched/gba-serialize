@@ -49,6 +49,6 @@ export class StructureSchema extends Schema<StructureValue> {
   }
 
   size(): number {
-    return this.fields.reduce((sum, [fieldKey, fieldSchema]) => sum + fieldSchema.size(), 0);
+    return this.fields.reduce((sum, field) => sum + field[1].size(), 0);
   }
 }
