@@ -2,6 +2,7 @@
 
 import { Schema, Value } from './schema';
 import invariant from '../util/invariant';
+import align from '../util/align';
 
 type StructureData = {
   [key: string]: Value<*, *>,
@@ -27,7 +28,7 @@ export class StructureSchema extends Schema<StructureValue> {
   unpack(buffer: Buffer, offset: number = 0): StructureValue {
     super.unpack(buffer, offset);
 
-    let structureOffset = offset;
+    let structureOffset = align(offset, this.alignment());
 
     return new StructureValue(this, () => this.fields.reduce((data, field) => {
       const [fieldKey, fieldSchema] = field;
@@ -50,5 +51,9 @@ export class StructureSchema extends Schema<StructureValue> {
 
   size(): number {
     return this.fields.reduce((sum, field) => sum + field[1].size(), 0);
+  }
+
+  alignment(): number {
+    return Math.max(...this.fields.map(field => field[1].alignment()));
   }
 }
