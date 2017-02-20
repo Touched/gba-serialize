@@ -38,4 +38,10 @@ export class Schema<T> {
   alignment(): number {
     return 0;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  size(): number {
+    return 0;
+  }
 }
+

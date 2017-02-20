@@ -36,6 +36,11 @@ describe('Schema: Integers', () => {
     expect(HalfWord.unpack(data).size()).to.equal(2);
   });
 
+  it('is not a dynamic type', () => {
+    expect(Word.size()).to.equal(4);
+    expect(HalfWord.size()).to.equal(2);
+  });
+
   it('sets the alignment to be equal to the size', () => {
     expect(Word.alignment()).to.equal(4);
     expect(HalfWord.alignment()).to.equal(2);
