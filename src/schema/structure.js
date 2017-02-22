@@ -33,6 +33,7 @@ export default class StructureSchema extends Schema<StructureData> {
       );
 
       structureOffset += fieldSize;
+      structureOffset = align(structureOffset, fieldSchema.alignment());
 
       return {
         ...data,
@@ -42,7 +43,10 @@ export default class StructureSchema extends Schema<StructureData> {
   }
 
   size(): number {
-    return this.fields.reduce((sum, field) => sum + field[1].size(), 0);
+    return this.fields.reduce(
+      (sum, field) => align(sum, field[1].alignment()) + field[1].size(),
+      0,
+    );
   }
 
   alignment(): number {

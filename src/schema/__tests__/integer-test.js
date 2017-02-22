@@ -26,8 +26,8 @@ describe('Schema: Integers', () => {
 
   it('enforces alignment', () => {
     const data = new Buffer([0, 0, 0, 0, 5, 4, 3, 2, 1]);
-    expect(Word.unpack(data, 7)).to.equal(0x02030405);
-    expect(HalfWord.unpack(data, 7)).to.equal(0x0203);
+    expect(Word.unpack(data, 3)).to.equal(0x02030405);
+    expect(HalfWord.unpack(data, 5)).to.equal(0x0203);
   });
 
   it('has a size equal to the size specified', () => {
