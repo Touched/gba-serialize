@@ -3,14 +3,13 @@
 import Schema from './schema';
 import invariant from '../util/invariant';
 import Context from './helpers/context';
-import align from '../util/align';
 import createLazyObject from '../util/createLazyObject';
 
 type StructureData = {
   [key: string]: mixed,
 };
 
-type StructureField = [string, Schema<*>];
+type StructureField = [?string, Schema<*>];
 type StructureFields = Array<StructureField>;
 
 export default class StructureSchema extends Schema<StructureData> {
@@ -22,7 +21,7 @@ export default class StructureSchema extends Schema<StructureData> {
   }
 
   unpack(buffer: Buffer, offset: number = 0, context: Context = new Context()): StructureData {
-    let structureOffset = align(offset, this.alignment());
+    let structureOffset = offset;
 
     return createLazyObject(this.fields.reduce((data, field) => {
       const [fieldKey, fieldSchema] = field;
@@ -42,7 +41,10 @@ export default class StructureSchema extends Schema<StructureData> {
       );
 
       structureOffset += fieldSize;
-      structureOffset = align(structureOffset, fieldSchema.alignment());
+
+      if (!fieldKey) {
+        return data;
+      }
 
       return {
         ...data,
@@ -53,12 +55,8 @@ export default class StructureSchema extends Schema<StructureData> {
 
   size(): number {
     return this.fields.reduce(
-      (sum, field) => align(sum, field[1].alignment()) + field[1].size(),
+      (sum, field) => sum + field[1].size(),
       0,
     );
-  }
-
-  alignment(): number {
-    return Math.max(...this.fields.map(field => field[1].alignment()));
   }
 }

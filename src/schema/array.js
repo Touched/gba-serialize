@@ -33,10 +33,6 @@ export default class ArraySchema<T> extends Schema<Array<T>> {
     });
   }
 
-  alignment(): number {
-    return this.elementSchema.alignment();
-  }
-
   size(): number {
     return -1;
   }

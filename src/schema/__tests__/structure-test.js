@@ -25,8 +25,9 @@ describe('Schema: Structures', () => {
     ['d', Byte],
   ]);
 
-  const structureWithAlignment = new StructureSchema([
+  const structureWithPadding = new StructureSchema([
     ['a', Byte],
+    [null, Byte],
     ['b', HalfWord],
     ['c', Byte],
   ]);
@@ -42,36 +43,28 @@ describe('Schema: Structures', () => {
     });
   });
 
+  it('ignores null keyed fields', () => {
+    const data = new Buffer([4, 3, 2, 0, 1]);
+
+    expect(structureWithPadding.unpack(data)).to.deep.equal({
+      a: 4,
+      b: 2,
+      c: 1,
+    })
+  });
+
   it('has a size equal to the sum of the sizes', () => {
     expect(structure.size()).to.equal(5);
   });
 
-  it('factors alignment into size calculation', () => {
-    expect(structureWithAlignment.size()).to.equal(5);
-  });
-
-  it('determines the alignment from the biggest element', () => {
-    expect(structure.alignment()).to.equal(2);
-  });
-
-  it('aligns the provided offset', () => {
+  it('reads from the provided offset', () => {
     const data = new Buffer([0, 0, 4, 3, 2, 0, 1]);
 
-    expect(structure.unpack(data, 1)).to.deep.equal({
+    expect(structure.unpack(data, 2)).to.deep.equal({
       a: 4,
       b: 3,
       c: 2,
       d: 1,
-    });
-  });
-
-  it('reads aligned values correctly', () => {
-    const data = new Buffer([1, 0, 2, 0, 3]);
-
-    expect(structureWithAlignment.unpack(data)).to.deep.equal({
-      a: 1,
-      b: 2,
-      c: 3,
     });
   });
 

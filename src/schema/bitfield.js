@@ -12,10 +12,11 @@ type BitfieldData = {
 type BitfieldMeta = {
   name: string,
   bitWidth: number,
+  signed: bool,
   reader: Buffer => number,
 };
 
-type BitfieldFields = Array<[string, number, ?bool]>;
+type BitfieldFields = Array<[?string, number, ?bool]>;
 
 export default class BitfieldSchema extends Schema<BitfieldData> {
   fields: Array<BitfieldMeta>;
@@ -26,7 +27,7 @@ export default class BitfieldSchema extends Schema<BitfieldData> {
 
     let bitOffset = 0;
 
-    this.fields = fields.map(([name, bitWidth, signed]) => {
+    this.fields = fields.reduce((result, [name, bitWidth, signed]) => {
       invariant(bitWidth > 0 && Number.isInteger(bitWidth), 'Bit width must be a positive integer');
 
       const byteStart = Math.floor(bitOffset / 8);
@@ -39,29 +40,24 @@ export default class BitfieldSchema extends Schema<BitfieldData> {
 
       bitOffset += bitWidth;
 
+      if (!name) {
+        return result;
+      }
+
+      const reader = signed ? (buffer) => {
+        const value = (buffer.readUIntLE(byteStart, byteLength) & mask) >> shift;
+        return (value & signMask) ? ~(value - 1) : value;
+      } : buffer => (buffer.readUIntLE(byteStart, byteLength) & mask) >> shift;
+
       const meta = {
         name,
         bitWidth,
+        reader,
         signed: !!signed,
       };
 
-      if (signed) {
-        return {
-          ...meta,
-          reader(buffer) {
-            const value = (buffer.readUIntLE(byteStart, byteLength) & mask) >> shift;
-            return (value & signMask) ? ~(value - 1) : value;
-          },
-        };
-      }
-
-      return {
-        ...meta,
-        reader(buffer) {
-          return (buffer.readUIntLE(byteStart, byteLength) & mask) >> shift;
-        },
-      };
-    });
+      return [...result, meta];
+    }, []);
 
     this.finalSize = Math.ceil(bitOffset / 8);
   }
@@ -73,10 +69,6 @@ export default class BitfieldSchema extends Schema<BitfieldData> {
       ...result,
       [name]: reader(slicedBuffer),
     }), {});
-  }
-
-  alignment(): number {
-    return 1;
   }
 
   size(): number {

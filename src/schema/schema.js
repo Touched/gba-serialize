@@ -12,13 +12,6 @@ export default class Schema<T> {
   }
 
   /**
-   * Determine the byte alignment for this schema.
-   */
-  alignment(): number {
-    return 0;
-  }
-
-  /**
    * Determine the fixed size for this schema, return -1 if it has no fixed size.
    */
   size(): number {
@@ -28,7 +21,7 @@ export default class Schema<T> {
   /**
    * Return the size of an unpacked value
    */
-  sizeOf(value: T): number {
+  sizeOf(value: T): number { // eslint-disable-line no-unused-vars
     return this.size();
   }
 }

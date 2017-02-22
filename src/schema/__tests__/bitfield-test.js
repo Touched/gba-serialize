@@ -12,6 +12,13 @@ describe('Schema: Bitfields', () => {
     ['d', 5],
   ]);
 
+  const bitfieldWithPadding = new BitfieldSchema([
+    ['a', 7],
+    ['b', 9],
+    [null, 3],
+    ['c', 5],
+  ]);
+
   it('unpacks a bitfield', () => {
     const data = new Buffer([0, 0x8a, 5, 0xa, 0]);
 
@@ -35,6 +42,17 @@ describe('Schema: Bitfields', () => {
       b: 11,
       c: -4,
       d: 1,
+    });
+  });
+
+
+  it('ignores null keyed fields', () => {
+    const data = new Buffer([0, 0x8a, 5, 0xa, 0]);
+
+    expect(bitfieldWithPadding.unpack(data, 1)).to.deep.equal({
+      a: 10,
+      b: 11,
+      c: 1,
     });
   });
 });

@@ -2,7 +2,6 @@
 
 import Schema from './schema';
 import invariant from '../util/invariant';
-import align from '../util/align';
 
 type IntegerSchemaOptions = {
   signed: bool,
@@ -24,11 +23,7 @@ export default class IntegerSchema extends Schema<number> {
   }
 
   unpack(buffer: Buffer, offset: number = 0): number {
-    return this.reader(buffer, align(offset, this.size()));
-  }
-
-  alignment(): number {
-    return this.size();
+    return this.reader(buffer, offset);
   }
 
   size(): number {

@@ -13,14 +13,9 @@ describe('Schema: Arrays', () => {
     context.set('count', 5);
 
     const buffer = new Buffer([0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0]);
-    const value = array.unpack(buffer, 1, context);
+    const value = array.unpack(buffer, 2, context);
 
     expect(value).to.deep.equal([1, 2, 3, 4, 5]);
-  });
-
-  it('derives alignment from the input schema', () => {
-    const array = new ArraySchema(Word, 'count');
-    expect(array.alignment()).to.equal(4);
   });
 
   it('does not have a fixed size', () => {
