@@ -1,23 +1,17 @@
 /* @flow */
 
-import { Schema, Value } from './schema';
+import Schema from './schema';
 import invariant from '../util/invariant';
 import align from '../util/align';
 
 type StructureData = {
-  [key: string]: Value<*, *>,
+  [key: string]: mixed,
 };
-
-export class StructureValue extends Value<StructureSchema, StructureData> {
-  size(): number {
-    return this.schema.size();
-  }
-}
 
 type StructureField = [string, Schema<*>];
 type StructureFields = Array<StructureField>;
 
-export class StructureSchema extends Schema<StructureValue> {
+export default class StructureSchema extends Schema<StructureData> {
   fields: StructureFields;
 
   constructor(fields: StructureFields) {
@@ -25,12 +19,10 @@ export class StructureSchema extends Schema<StructureValue> {
     this.fields = fields;
   }
 
-  unpack(buffer: Buffer, offset: number = 0): StructureValue {
-    super.unpack(buffer, offset);
-
+  unpack(buffer: Buffer, offset: number = 0): StructureData {
     let structureOffset = align(offset, this.alignment());
 
-    return new StructureValue(this, () => this.fields.reduce((data, field) => {
+    return this.fields.reduce((data, field) => {
       const [fieldKey, fieldSchema] = field;
       const fieldValue = fieldSchema.unpack(buffer, structureOffset);
       const fieldSize = fieldSchema.size();
@@ -46,7 +38,7 @@ export class StructureSchema extends Schema<StructureValue> {
         ...data,
         [fieldKey]: fieldValue,
       };
-    }, {}));
+    }, {});
   }
 
   size(): number {

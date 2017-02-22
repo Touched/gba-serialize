@@ -1,20 +1,14 @@
 /* @flow */
 
-import { Schema, Value } from './schema';
+import Schema from './schema';
 import invariant from '../util/invariant';
 import align from '../util/align';
-
-export class IntegerValue extends Value<IntegerSchema, number> {
-  size(): number {
-    return this.schema.size();
-  }
-}
 
 type IntegerSchemaOptions = {
   signed: bool,
 };
 
-export class IntegerSchema extends Schema<IntegerValue> {
+export default class IntegerSchema extends Schema<number> {
   width: number;
   signed: bool;
   reader: (Buffer, number) => number;
@@ -29,9 +23,8 @@ export class IntegerSchema extends Schema<IntegerValue> {
     this.reader = (buffer, offset) => read.call(buffer, offset, this.size());
   }
 
-  unpack(buffer: Buffer, offset: number = 0): IntegerValue {
-    super.unpack(buffer, offset);
-    return new IntegerValue(this, () => this.reader(buffer, align(offset, this.size())));
+  unpack(buffer: Buffer, offset: number = 0): number {
+    return this.reader(buffer, align(offset, this.size()));
   }
 
   alignment(): number {
