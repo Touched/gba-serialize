@@ -2,6 +2,7 @@
 
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
+import { spy } from 'sinon';
 import { Byte, HalfWord } from '../integer';
 import StructureSchema from '../structure';
 
@@ -61,5 +62,20 @@ describe('Schema: Structures', () => {
       b: 2,
       c: 3,
     });
+  });
+
+  it('creates a lazy object when unpacking', () => {
+    const unpackSpy = spy(Byte, 'unpack');
+
+    const structureWithSpy = new StructureSchema([
+      ['a', Byte],
+    ]);
+
+    const value = structureWithSpy.unpack(new Buffer([0]));
+
+    expect(unpackSpy).to.not.have.been.called();
+    expect(value.a).to.equal(value.a);
+    expect(value.a).to.equal(0);
+    expect(unpackSpy).to.have.been.calledOnce();
   });
 });

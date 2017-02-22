@@ -3,6 +3,7 @@
 import Schema from './schema';
 import invariant from '../util/invariant';
 import align from '../util/align';
+import createLazyObject from '../util/createLazyObject';
 
 type StructureData = {
   [key: string]: mixed,
@@ -22,9 +23,9 @@ export default class StructureSchema extends Schema<StructureData> {
   unpack(buffer: Buffer, offset: number = 0): StructureData {
     let structureOffset = align(offset, this.alignment());
 
-    return this.fields.reduce((data, field) => {
+    return createLazyObject(this.fields.reduce((data, field) => {
       const [fieldKey, fieldSchema] = field;
-      const fieldValue = fieldSchema.unpack(buffer, structureOffset);
+      const fieldThunk = fieldSchema.unpack.bind(fieldSchema, buffer, structureOffset);
       const fieldSize = fieldSchema.size();
 
       invariant(
@@ -37,9 +38,9 @@ export default class StructureSchema extends Schema<StructureData> {
 
       return {
         ...data,
-        [fieldKey]: fieldValue,
+        [fieldKey]: fieldThunk,
       };
-    }, {});
+    }, {}));
   }
 
   size(): number {
