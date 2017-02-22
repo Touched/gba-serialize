@@ -2,6 +2,7 @@
 
 import Schema from './schema';
 import invariant from '../util/invariant';
+import Context from './helpers/context';
 import align from '../util/align';
 import createLazyObject from '../util/createLazyObject';
 
@@ -20,12 +21,19 @@ export default class StructureSchema extends Schema<StructureData> {
     this.fields = fields;
   }
 
-  unpack(buffer: Buffer, offset: number = 0): StructureData {
+  unpack(buffer: Buffer, offset: number = 0, context: Context = new Context()): StructureData {
     let structureOffset = align(offset, this.alignment());
 
     return createLazyObject(this.fields.reduce((data, field) => {
       const [fieldKey, fieldSchema] = field;
-      const fieldThunk = fieldSchema.unpack.bind(fieldSchema, buffer, structureOffset);
+
+      const fieldThunk = fieldSchema.unpack.bind(
+        fieldSchema,
+        buffer,
+        structureOffset,
+        new Context(context),
+      );
+
       const fieldSize = fieldSchema.size();
 
       invariant(

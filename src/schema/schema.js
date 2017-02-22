@@ -1,10 +1,13 @@
 /* @flow */
 
+import Context from './helpers/context';
+
 export default class Schema<T> {
   /**
    * Unpack a structure from a buffer.
    */
-  unpack(buffer: Buffer, offset: number = 0): T { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars
+  unpack(buffer: Buffer, offset: number = 0, context: Context): T {
     throw new Error('Unimplemented method');
   }
 
@@ -20,5 +23,12 @@ export default class Schema<T> {
    */
   size(): number {
     return 0;
+  }
+
+  /**
+   * Return the size of an unpacked value
+   */
+  sizeOf(value: T): number {
+    return this.size();
   }
 }
