@@ -50,7 +50,7 @@ describe('Schema: Structures', () => {
       a: 4,
       b: 2,
       c: 1,
-    })
+    });
   });
 
   it('has a size equal to the sum of the sizes', () => {
