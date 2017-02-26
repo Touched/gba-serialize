@@ -30,4 +30,12 @@ describe('Schema: Arrays', () => {
     const nestedArray = new ArraySchema(new ArraySchema(Word, 'count'), 'count');
     expect(nestedArray.sizeOf([[0, 0, 0], [0, 0, 0], [0, 0, 0]])).to.equal(36);
   });
+
+  it('allows a static size', () => {
+    const array = new ArraySchema(HalfWord, 5);
+    const buffer = new Buffer([0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0]);
+    const value = array.unpack(buffer, 2);
+
+    expect(value).to.deep.equal([1, 2, 3, 4, 5]);
+  });
 });
