@@ -39,6 +39,11 @@ export default class ArraySchema<T> extends Schema<Array<T>> {
   }
 
   sizeOf(value: Array<T>): number {
-    return value.reduce((sum, element) => sum + this.elementSchema.sizeOf(element), 0);
+    // Dynamically sized schemas can have elements of varying sizes
+    if (this.elementSchema.size() === -1) {
+      return value.reduce((sum, element) => sum + this.elementSchema.sizeOf(element), 0);
+    } else {
+      return value.length * this.elementSchema.size();
+    }
   }
 }
