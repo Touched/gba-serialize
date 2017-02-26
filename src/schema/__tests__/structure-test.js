@@ -107,7 +107,7 @@ describe('Schema: Structures', () => {
         return {
           data,
           size,
-        }
+        };
       }
     }
 

@@ -24,7 +24,7 @@ export default class Context {
       context = context.parent;
     }
 
-    throw new Error('Undefined key');
+    throw new Error(`Undefined key: ${key}`);
   }
 
   has(key: string): bool {

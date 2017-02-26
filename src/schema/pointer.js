@@ -15,7 +15,7 @@ export default class PointerSchema<T> extends Schema<T> {
 
   unpack(buffer: Buffer, offset: number = 0, context: Context = new Context()): T {
     const address = Word.unpack(buffer, offset, context);
-    return this.wrappedSchema.unpack(buffer, addressToOffset(address), new Context(context));
+    return this.wrappedSchema.unpack(buffer, addressToOffset(address), context);
   }
 
   size() {

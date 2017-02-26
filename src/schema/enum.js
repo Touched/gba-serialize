@@ -15,7 +15,7 @@ export default class EnumSchema extends Schema<?string> {
   }
 
   unpack(buffer: Buffer, offset: number = 0, context: Context = new Context()): ?string {
-    const value = this.backingSchema.unpack(buffer, offset, new Context(context));
+    const value = this.backingSchema.unpack(buffer, offset, context);
     return this.mapping.get(value) || null;
   }
 }

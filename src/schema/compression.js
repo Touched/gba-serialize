@@ -86,7 +86,7 @@ export default class CompressionSchema<T> extends Schema<CompressedValue<T>> {
 
   unpack(buffer: Buffer, offset: number = 0, context: Context = new Context()): CompressedValue<T> {
     const { decompressed, compressedSize, size } = decompress(buffer.slice(offset));
-    const data = this.wrappedSchema.unpack(decompressed, 0, new Context(context));
+    const data = this.wrappedSchema.unpack(decompressed, 0, context);
 
     return { compressedSize, size, data };
   }

@@ -23,6 +23,8 @@ export default class StructureSchema extends Schema<StructureData> {
   unpack(buffer: Buffer, offset: number = 0, context: Context = new Context()): StructureData {
     let structureOffset = offset;
 
+    const structureContext = new Context(context);
+
     return createLazyObject(this.fields.reduce((data, field) => {
       const [fieldKey, fieldSchema] = field;
 
@@ -31,7 +33,7 @@ export default class StructureSchema extends Schema<StructureData> {
 
       if (fieldSize === -1) {
         // Dynamic values cannot be lazily unpacked
-        const value = fieldSchema.unpack(buffer, structureOffset, new Context(context));
+        const value = fieldSchema.unpack(buffer, structureOffset, structureContext);
 
         structureOffset += fieldSchema.sizeOf(value);
 
@@ -41,7 +43,7 @@ export default class StructureSchema extends Schema<StructureData> {
           fieldSchema,
           buffer,
           structureOffset,
-          new Context(context),
+          structureContext,
         );
 
         invariant(
