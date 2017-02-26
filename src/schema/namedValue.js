@@ -18,4 +18,12 @@ export default class NamedValueSchema<T> extends Schema<T> {
     context.set(this.name, value);
     return value;
   }
+
+  size(): number {
+    return this.wrappedSchema.size();
+  }
+
+  sizeOf(value: T): number {
+    return this.wrappedSchema.sizeOf(value);
+  }
 }

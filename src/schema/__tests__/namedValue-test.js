@@ -15,4 +15,11 @@ describe('Schema: NamedValue', () => {
     expect(value).to.equal(1);
     expect(context.get('namedByte')).to.equal(1);
   });
+
+  it('delegates size and sizeOf to child schema', () => {
+    const namedByte = new NamedValueSchema('namedByte', Byte);
+
+    expect(namedByte.size()).to.equal(Byte.size());
+    expect(namedByte.sizeOf(1)).to.equal(Byte.sizeOf(1));
+  });
 });
