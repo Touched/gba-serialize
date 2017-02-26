@@ -26,21 +26,31 @@ export default class StructureSchema extends Schema<StructureData> {
     return createLazyObject(this.fields.reduce((data, field) => {
       const [fieldKey, fieldSchema] = field;
 
-      const fieldThunk = fieldSchema.unpack.bind(
-        fieldSchema,
-        buffer,
-        structureOffset,
-        new Context(context),
-      );
-
       const fieldSize = fieldSchema.size();
+      let fieldThunk;
 
-      invariant(
-        fieldSize > 0 && Number.isInteger(fieldSize),
-        'Field size must be a non-negative positive integer',
-      );
+      if (fieldSize === -1) {
+        // Dynamic values cannot be lazily unpacked
+        const value = fieldSchema.unpack(buffer, structureOffset, new Context(context));
 
-      structureOffset += fieldSize;
+        structureOffset += fieldSchema.sizeOf(value);
+
+        fieldThunk = () => value;
+      } else {
+        fieldThunk = fieldSchema.unpack.bind(
+          fieldSchema,
+          buffer,
+          structureOffset,
+          new Context(context),
+        );
+
+        invariant(
+          fieldSize > 0 && Number.isInteger(fieldSize),
+          'Field size must be a non-negative positive integer',
+        );
+
+        structureOffset += fieldSize;
+      }
 
       if (!fieldKey) {
         return data;

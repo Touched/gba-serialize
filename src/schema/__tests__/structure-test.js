@@ -3,8 +3,9 @@
 import { describe, it, beforeEach, afterEach } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { Byte, HalfWord } from '../integer';
+import { Byte, HalfWord, Word } from '../integer';
 import StructureSchema from '../structure';
+import Schema from '../schema';
 import Context from '../helpers/context';
 
 describe('Schema: Structures', () => {
@@ -81,6 +82,51 @@ describe('Schema: Structures', () => {
     expect(value.a).to.equal(value.a);
     expect(value.a).to.equal(0);
     expect(unpackSpy).to.have.been.calledOnce();
+  });
+
+  it('handles dynamically sized child values', () => {
+    class DynamicSchema extends Schema {
+      size() {
+        return -1;
+      }
+
+      sizeOf({ size }) {
+        return size;
+      }
+
+      unpack(buffer, offset = 0) {
+        const size = offset;
+
+        let dynamicOffset = offset;
+        const data = [...Array(size)].map(() => {
+          const value = Byte.unpack(buffer, dynamicOffset);
+          dynamicOffset += Byte.size();
+          return value;
+        });
+
+        return {
+          data,
+          size,
+        }
+      }
+    }
+
+    const structureWithDynamicSchema = new StructureSchema([
+      ['a', Word],
+      ['b', new DynamicSchema()],
+      ['c', Word],
+    ]);
+
+    const data = new Buffer([0, 0, 0, 0, 1, 2, 3, 4, 0, 0, 0, 0]);
+
+    expect(structureWithDynamicSchema.unpack(data)).to.deep.equal({
+      a: 0,
+      b: {
+        data: [1, 2, 3, 4],
+        size: 4,
+      },
+      c: 0,
+    });
   });
 
   describe('context', () => {
