@@ -6,6 +6,7 @@ import { PNG } from 'pngjs2';
 import fs from 'fs';
 import loadFixture from '../../../test/loadFixture';
 import ImageSchema from '../image';
+import CompressionSchema from '../compression';
 
 function applyPalette(data: Buffer, palette: Array<[number, number, number, number]>): Buffer {
   return Array.from(data.values()).reduce(
@@ -14,7 +15,7 @@ function applyPalette(data: Buffer, palette: Array<[number, number, number, numb
   );
 }
 
-describe('Schema: Images', () => {
+describe('Schema: Images and Compression', () => {
   it('can unpack a 4bpp image', () => {
     const png = PNG.sync.read(fs.readFileSync(loadFixture('4bpp.png')));
     const packed = fs.readFileSync(loadFixture('4bpp-uncompressed.img.bin'));
@@ -31,6 +32,16 @@ describe('Schema: Images', () => {
 
     const image = new ImageSchema(96, 96, { bpp: 8 });
     const unpacked = image.unpack(packed);
+
+    expect(applyPalette(unpacked, png.palette)).to.deep.equal(png.data);
+  });
+
+  it('unpacks compressed images', () => {
+    const png = PNG.sync.read(fs.readFileSync(loadFixture('4bpp.png')));
+    const packed = fs.readFileSync(loadFixture('4bpp-compressed.img.bin'));
+
+    const image = new CompressionSchema(new ImageSchema(64, 64, { bpp: 4 }));
+    const { data: unpacked } = image.unpack(packed);
 
     expect(applyPalette(unpacked, png.palette)).to.deep.equal(png.data);
   });
