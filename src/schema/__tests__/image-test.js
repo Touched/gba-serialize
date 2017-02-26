@@ -34,6 +34,7 @@ describe('Schema: Images and Compression', () => {
     const unpacked = image.unpack(packed);
 
     expect(applyPalette(unpacked, png.palette)).to.deep.equal(png.data);
+    expect(packed.length).to.equal(image.sizeOf(unpacked));
   });
 
   it('unpacks compressed images', () => {
@@ -41,8 +42,9 @@ describe('Schema: Images and Compression', () => {
     const packed = fs.readFileSync(loadFixture('4bpp-compressed.img.bin'));
 
     const image = new CompressionSchema(new ImageSchema(64, 64, { bpp: 4 }));
-    const { data: unpacked } = image.unpack(packed);
+    const unpacked = image.unpack(packed);
 
-    expect(applyPalette(unpacked, png.palette)).to.deep.equal(png.data);
+    expect(applyPalette(unpacked.data, png.palette)).to.deep.equal(png.data);
+    expect(packed.length).to.equal(image.sizeOf(unpacked));
   });
 });

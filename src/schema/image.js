@@ -76,6 +76,6 @@ export default class ImageSchema extends Schema<Buffer> {
   }
 
   sizeOf(value: Buffer): number {
-    return -1;
+    return value.length;
   }
 }
