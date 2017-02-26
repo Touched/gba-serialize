@@ -38,4 +38,11 @@ describe('Schema: Arrays', () => {
 
     expect(value).to.deep.equal([1, 2, 3, 4, 5]);
   });
+
+  it('handles dynamically sized values', () => {
+    const array = new ArraySchema(new ArraySchema(HalfWord, 2), 2);
+    const data = new Buffer([1, 0, 2, 0, 3, 0, 4, 0]);
+
+    expect(array.unpack(data)).to.deep.equal([[1, 2], [3, 4]]);
+  });
 });

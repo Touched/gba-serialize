@@ -27,7 +27,8 @@ export default class ArraySchema<T> extends Schema<Array<T>> {
     return [...Array(length)].map(() => {
       const value = this.elementSchema.unpack(buffer, arrayOffset, context);
 
-      arrayOffset += this.elementSchema.size();
+      const size = this.elementSchema.size();
+      arrayOffset += size === -1 ? this.elementSchema.sizeOf(value) : size;
 
       return value;
     });
