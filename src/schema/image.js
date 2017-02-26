@@ -59,11 +59,12 @@ export default class ImageSchema extends Schema<Buffer> {
   unpack(buffer: Buffer, offset: number = 0): Buffer {
     const { width, height } = this.dimensions;
     const pixelCount = width * height;
+    const imageBuffer = buffer.slice(offset);
 
     const pixels = [...Array(pixelCount)].map((_, index) => tiledCodec(
       indexToPoint(index, this.dimensions),
       this.dimensions,
-      buffer,
+      imageBuffer,
       this.bpp,
     ));
 
