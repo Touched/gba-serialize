@@ -5,6 +5,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import { Byte, HalfWord, Word } from '../integer';
 import StructureSchema from '../structure';
+import NamedValueSchema from '../namedValue';
 import Schema from '../schema';
 import Context from '../helpers/context';
 
@@ -82,6 +83,21 @@ describe('Schema: Structures', () => {
     expect(value.a).to.equal(value.a);
     expect(value.a).to.equal(0);
     expect(unpackSpy).to.have.been.calledOnce();
+  });
+
+  it('eagerly unpacks named values', () => {
+    const namedByte = new NamedValueSchema('namedByte', Byte);
+    const context = new Context();
+
+    const unpackSpy = sandbox.spy(namedByte, 'unpack');
+
+    const structureWithNamedValue = new StructureSchema([
+      ['a', namedByte],
+    ]);
+
+    structureWithNamedValue.unpack(new Buffer([1]), 0, context);
+
+    expect(unpackSpy).to.have.been.called();
   });
 
   it('handles dynamically sized child values', () => {

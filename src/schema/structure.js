@@ -4,6 +4,7 @@ import Schema from './schema';
 import invariant from '../util/invariant';
 import Context from './helpers/context';
 import createLazyObject from '../util/createLazyObject';
+import NamedValueSchema from './namedValue';
 
 type StructureData = {
   [key: string]: mixed,
@@ -31,8 +32,10 @@ export default class StructureSchema extends Schema<StructureData> {
       const fieldSize = fieldSchema.size();
       let fieldThunk;
 
-      if (fieldSize === -1) {
-        // Dynamic values cannot be lazily unpacked
+      /* Dynamic values cannot be lazily unpacked, and named values
+         must be eagerly evaluated so that they appear in the
+         context. */
+      if (fieldSize === -1 || fieldSchema instanceof NamedValueSchema) {
         const value = fieldSchema.unpack(buffer, structureOffset, structureContext);
 
         structureOffset += fieldSchema.sizeOf(value);
