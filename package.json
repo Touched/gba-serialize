@@ -1,5 +1,5 @@
 {
-  "name": "binary-reader",
+  "name": "@Touched/gba-serialize",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
