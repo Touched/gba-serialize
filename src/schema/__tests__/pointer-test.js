@@ -10,7 +10,10 @@ describe('Schema: Pointers', () => {
     const pointer = new PointerSchema(Word);
     const data = new Buffer([4, 3, 2, 1, 0, 0, 0, 8]);
 
-    expect(pointer.unpack(data, 4)).to.deep.equal(0x01020304);
+    expect(pointer.unpack(data, 4)).to.deep.equal({
+      address: 0x08000000,
+      target: 0x01020304,
+    });
   });
 
   it('has as size of 4', () => {
