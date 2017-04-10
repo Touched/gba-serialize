@@ -18,4 +18,8 @@ export default class EnumSchema extends Schema<?string> {
     const value = this.backingSchema.unpack(buffer, offset, context);
     return this.mapping.get(value) || null;
   }
+
+  size(): number {
+    return this.backingSchema.size();
+  }
 }
