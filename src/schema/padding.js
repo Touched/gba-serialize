@@ -1,7 +1,6 @@
 /* @flow */
 
 import Schema from './schema';
-import Context from './helpers/context';
 
 export default class PaddingSchema extends Schema<?string> {
   length: number;
@@ -11,7 +10,7 @@ export default class PaddingSchema extends Schema<?string> {
     this.length = length;
   }
 
-  unpack(buffer: Buffer, offset: number = 0, context: Context = new Context()): null {
+  unpack(): null {
     return null;
   }
 
