@@ -22,4 +22,5 @@ export { default as Schema } from './schema/schema';
 export { default as StructureSchema } from './schema/structure';
 export { default as TupleSchema } from './schema/tuple';
 export { default as PaddingSchema } from './schema/padding';
+export { default as CaseSchema } from './schema/case';
 export { default as addressToOffset } from './util/addressToOffset';
