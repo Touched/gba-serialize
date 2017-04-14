@@ -32,6 +32,10 @@ type AnyCondition = {|
   any: Array<Condition>,
 |};
 
+type NotCondition = {|
+  not: Condition,
+|};
+
 type DefaultCondition = {||};
 
 type Condition = LessThanCondition
@@ -41,6 +45,7 @@ type Condition = LessThanCondition
                | GreaterThanCondition
                | AllCondition
                | AnyCondition
+               | NotCondition
                | DefaultCondition;
 
 type Case = {
@@ -73,6 +78,8 @@ export function test(condition: Condition, value: mixed) {
     return condition.all.every(c => test(c, value));
   } else if (condition.any !== undefined) {
     return condition.any.some(c => test(c, value));
+  } else if (condition.not !== undefined) {
+    return !test(condition.not, value);
   } if (Object.keys(condition).length === 0) {
     return true;
   }

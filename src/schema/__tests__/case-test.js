@@ -118,6 +118,19 @@ describe('Schema: Case', () => {
       expect(test(cond, 6)).to.be.false();
     });
 
+    it('logical NOT', () => {
+      const cond = {
+        not: {
+          eq: 1,
+        },
+      };
+
+      expect(test(cond, 1)).to.be.false();
+      expect(test(cond, 2)).to.be.true();
+      expect(test(cond, 3)).to.be.true();
+      expect(test(cond, '0')).to.be.true();
+    });
+
     it('default', () => {
       expect(test({}, 0)).to.be.true();
       expect(test({}, 1)).to.be.true();
