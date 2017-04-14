@@ -58,6 +58,10 @@ export default class StructureSchema extends Schema<StructureData> {
       }
 
       if (!fieldKey) {
+        if (fieldSize === -1) {
+          throw new Error('Dynamically sized values must be named in the structure');
+        }
+
         return data;
       }
 
@@ -69,9 +73,30 @@ export default class StructureSchema extends Schema<StructureData> {
   }
 
   size(): number {
+    if (this.fields.some(field => field[1].size() === -1)) {
+      return -1;
+    }
+
     return this.fields.reduce(
       (sum, field) => sum + field[1].size(),
       0,
     );
+  }
+
+  sizeOf(value: StructureData): number {
+    if (this.fields.some(field => field[1].size() === -1)) {
+      return this.fields.reduce((sum, [fieldName, fieldSchema]) => {
+        const size = fieldSchema.size();
+
+        if (size === -1) {
+          invariant(fieldName, 'Dynamically sized schemas as structure fields must be named');
+          return sum + fieldSchema.sizeOf((value[fieldName]: any));
+        }
+
+        return sum + size;
+      }, 0);
+    }
+
+    return this.size();
   }
 }

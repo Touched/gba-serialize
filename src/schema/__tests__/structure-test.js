@@ -101,16 +101,16 @@ describe('Schema: Structures', () => {
   });
 
   it('handles dynamically sized child values', () => {
-    class DynamicSchema extends Schema {
-      size() {
+    class DynamicSchema extends Schema<{ size: number, data: mixed}> {
+      size(): number {
         return -1;
       }
 
-      sizeOf({ size }) {
+      sizeOf({ size }): number {
         return size;
       }
 
-      unpack(buffer, offset = 0) {
+      unpack(buffer, offset = 0): { size: number, data: mixed} {
         const size = offset;
 
         let dynamicOffset = offset;
@@ -143,6 +143,17 @@ describe('Schema: Structures', () => {
       },
       c: 0,
     });
+
+    expect(structureWithDynamicSchema.size()).to.equal(-1);
+
+    expect(structureWithDynamicSchema.sizeOf({
+      a: 0,
+      b: {
+        data: [1, 2, 3, 4],
+        size: 4,
+      },
+      c: 0,
+    })).to.equal(12);
   });
 
   describe('context', () => {
