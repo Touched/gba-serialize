@@ -46,7 +46,7 @@ type Condition = LessThanCondition
 type Case = {
   name: string,
   condition: Condition,
-  schema: Schema<any>,
+  schema: ?Schema<any>,
 };
 
 type CaseValue = {
@@ -80,7 +80,7 @@ export function test(condition: Condition, value: mixed) {
   throw Error(`Invalid condition ${JSON.stringify(condition)}`);
 }
 
-export default class CaseSchema extends Schema<CaseValue> {
+export default class CaseSchema extends Schema<?CaseValue> {
   cases: Array<Case>;
 
   constructor(cases: Array<Case>) {
@@ -88,7 +88,7 @@ export default class CaseSchema extends Schema<CaseValue> {
     this.cases = cases;
   }
 
-  unpack(buffer: Buffer, offset: number = 0, context: Context = new Context()): CaseValue {
+  unpack(buffer: Buffer, offset: number = 0, context: Context = new Context()): ?CaseValue {
     // Find the first value that is true
 
     const caseIndex = this.cases.findIndex(({ name, condition }) => {
@@ -102,21 +102,28 @@ export default class CaseSchema extends Schema<CaseValue> {
 
     const { schema } = this.cases[caseIndex];
 
-    return {
+    return schema ? {
       case: caseIndex,
       value: schema.unpack(buffer, offset, context),
-    };
+    } : null;
   }
 
   size(): number {
     return -1;
   }
 
-  sizeOf(value: CaseValue): number {
-    invariant(value.case < this.cases.length, `Invalid case index: ${value.case}`);
+  sizeOf(value: ?CaseValue): number {
+    if (value) {
+      invariant(value.case < this.cases.length, `Invalid case index: ${value.case}`);
 
-    const { schema } = this.cases[value.case];
-    const size = schema.size();
-    return size === -1 ? schema.sizeOf(value.value) : size;
+      const { schema } = this.cases[value.case];
+
+      if (schema) {
+        const size = schema.size();
+        return size === -1 ? schema.sizeOf(value.value) : size;
+      }
+    }
+
+    return 0;
   }
 }

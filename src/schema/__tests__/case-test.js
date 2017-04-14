@@ -53,6 +53,17 @@ describe('Schema: Case', () => {
     expect(schema.sizeOf({ case: 2, value: 0 })).to.equal(4);
   });
 
+  it('unpacking returns null if schema is null', () => {
+    const context = new Context();
+    context.set('test', 0);
+
+    expect(new CaseSchema([{
+      name: 'test',
+      condition: { eq: 0 },
+      schema: null,
+    }]).unpack(new Buffer([0]), 0, context)).to.deep.equal(null);
+  });
+
   describe('Conditions', () => {
     it('less than', () => {
       expect(test({ lt: 1 }, 0)).to.be.true();
