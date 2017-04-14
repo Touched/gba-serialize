@@ -24,4 +24,5 @@ export { default as TupleSchema } from './schema/tuple';
 export { default as PaddingSchema } from './schema/padding';
 export { default as ListSchema } from './schema/list';
 export { default as CaseSchema } from './schema/case';
+export { default as StringSchema } from './schema/string';
 export { default as addressToOffset } from './util/addressToOffset';
