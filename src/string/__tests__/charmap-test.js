@@ -4,6 +4,10 @@ import { describe, it } from 'mocha';
 import { expect } from 'chai';
 import Charmap from '../charmap';
 
+function array(map) {
+  return Array.from(map.entries());
+}
+
 describe('String Charmap', () => {
   describe('parse', () => {
     it('loads a charmap', () => {
@@ -55,13 +59,22 @@ describe('String Charmap', () => {
 
       const charmap = Charmap.parse(source);
 
-      function array(map) {
-        return Array.from(map.entries());
-      }
-
       expect(array(charmap.map.character)).to.deep.equal(array(character));
       expect(array(charmap.map.placeholder)).to.deep.equal(array(placeholder));
       expect(array(charmap.map.escape)).to.deep.equal(array(escape));
+      expect(array(charmap.map.terminator)).to.deep.equal(array(terminator));
+    });
+
+    it('loads a character map with a comment at the end', () => {
+      const source = `
+         '$' = FE @ comment`;
+
+      const terminator = new Map([
+        ['$', new Buffer([254])],
+      ]);
+
+      const charmap = Charmap.parse(source);
+
       expect(array(charmap.map.terminator)).to.deep.equal(array(terminator));
     });
   });

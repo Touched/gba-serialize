@@ -89,7 +89,7 @@ class CharmapParser {
     if (this.isChar(AT_SYMBOL)) {
       this.incrementPosition();
 
-      while (!this.isChar(NEWLINE)) {
+      while (!this.isEOF() && !this.isChar(NEWLINE)) {
         this.incrementPosition();
       }
     }
@@ -212,7 +212,10 @@ class CharmapParser {
       this.invariant(this.isEOF() || this.isChar(NEWLINE), 'Unexpected junk at end of line');
       this.incrementPosition();
       this.incrementLine();
-      this.invariant(!this.isChar(CARRIAGE_RETURN), 'Only UNIX line endings supported');
+
+      if (!this.isEOF()) {
+        this.invariant(!this.isChar(CARRIAGE_RETURN), 'Only UNIX line endings supported');
+      }
     }
   }
 
