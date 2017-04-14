@@ -38,4 +38,52 @@ describe('String Decoder', () => {
   it('decodes unknown characters to hex escapes', () => {
     expect(decode(new Buffer([3, 4, 5]))).to.deep.equal([3, '\\x03\\x04\\x05']);
   });
+
+  it('enforces map precedence: character -> placeholder -> escape', () => {
+    const charmap1 = new Charmap({
+      character: new Map([
+        ['a', new Buffer([0])],
+      ]),
+      placeholder: new Map([
+        ['a', new Buffer([0])],
+      ]),
+      escape: new Map([
+        ['a', new Buffer([0])],
+      ]),
+      terminator: new Map([
+        ['$', new Buffer([0xFF])],
+      ]),
+    });
+
+    const charmap2 = new Charmap({
+      character: new Map([
+      ]),
+      placeholder: new Map([
+        ['a', new Buffer([0])],
+      ]),
+      escape: new Map([
+        ['a', new Buffer([0])],
+      ]),
+      terminator: new Map([
+        ['$', new Buffer([0xFF])],
+      ]),
+    });
+
+    const charmap3 = new Charmap({
+      character: new Map([
+      ]),
+      placeholder: new Map([
+      ]),
+      escape: new Map([
+        ['a', new Buffer([0])],
+      ]),
+      terminator: new Map([
+        ['$', new Buffer([0xFF])],
+      ]),
+    });
+
+    expect(buildDecoder(charmap1)(new Buffer([0]))).to.deep.equal([1, 'a']);
+    expect(buildDecoder(charmap2)(new Buffer([0]))).to.deep.equal([1, '[a]']);
+    expect(buildDecoder(charmap3)(new Buffer([0]))).to.deep.equal([1, '\\a']);
+  });
 });

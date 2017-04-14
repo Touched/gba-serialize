@@ -121,7 +121,7 @@ class DecoderDFA {
 export default function buildDecoder(charmap: Charmap): (Buffer, n: ?number) => [number, string] {
   const dfa = new DecoderDFA();
 
-  Object.keys(charmap.map).forEach(type =>
+  ['terminator', 'escape', 'placeholder', 'character'].forEach(type =>
     charmap.map[type].forEach((buffer, string) =>
       dfa.addStates(buffer, { type, value: string }),
     ),
