@@ -10,6 +10,7 @@
     "test": "npm run lint && npm run check && npm run testonly",
     "watch": "babel-node ./scripts/watch.js",
     "genfixture": "babel-node ./test/runFixtureTests.js generate",
+    "clean": "rimraf lib",
     "build": "babel src/ --out-dir lib/ --ignore __tests__,__mocks__",
     "prepublish": "npm run clean && npm run build"
   },
@@ -39,6 +40,7 @@
     "json5": "^0.5.1",
     "mocha": "^3.2.0",
     "pngjs2": "^2.0.0",
+    "rimraf": "^2.6.1",
     "sane": "^1.5.0",
     "sinon": "^1.17.7",
     "sinon-chai": "^2.8.0"
