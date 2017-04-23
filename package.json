@@ -1,7 +1,7 @@
 {
-  "name": "@Touched/gba-serialize",
+  "name": "@touched/gba-serialize",
   "version": "0.0.1",
-  "description": "",
+  "description": "Tools for reading binary structures in the GBA",
   "main": "lib/index.js",
   "scripts": {
     "lint": "eslint 'src/**/*.js' 'test/**/*.js'",
