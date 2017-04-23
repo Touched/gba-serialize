@@ -16,7 +16,6 @@
   },
   "author": "Touched",
   "license": "GPL-3.0",
-  "private": true,
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-eslint": "^7.1.1",
