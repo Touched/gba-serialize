@@ -1,6 +1,6 @@
 {
   "name": "@touched/gba-serialize",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Tools for reading binary structures in the GBA",
   "main": "lib/index.js",
   "scripts": {
